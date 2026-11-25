@@ -1,0 +1,20 @@
+# step: the docs mrepo, from the docs component
+. boot/deploy docs haiccing/base-component-docs
+# expect: "deployed":"docs","mrepo":"local/docs","package":"haiccing/base-component-docs"
+# step: its front page; a page in a package's context; a short keyword, a choice of packages
+docs info/get
+# expect: "keyword":"."
+docs info/get haiccing/base-package-boot/deploy
+# expect: "keyword":"haiccing/base-package-boot/deploy","context":"haiccing/base-package-boot"
+docs info/get deploy
+# expect: "keyword":"haiccing/base-package-boot/deploy"
+# step: the store's new packages added; the build removed, built again
+docs service/initialise
+# expect: "state":"started","again":true
+docs service/stop
+# expect: "state":"initialised"
+docs service/shutdown
+# expect: "state":"booted"
+# step: torn down when it is no longer wanted
+. boot/teardown docs
+# expect: "tornDown":"docs"

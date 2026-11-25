@@ -11,17 +11,7 @@ forward visibility only: its shortcuts and its links layer.
 
 ## Steps
 
-```sh
-# every mrepo of the install, from the registry: its unique URI, where
-# it is from the root, its package, running or not
-haicc . haicc/mrepos
-# one by its unique URI; a namespace's; by what its record says
-haicc . haicc/mrepos local/docs
-haicc . haicc/mrepos "local/*"
-haicc . haicc/mrepos "*/*[package='haiccing/base-component-docs']"
-# what the boot mrepo deployed itself: its links, at main
-haicc . crud/read "*"
-```
+The script, [steps.haicc](steps.haicc): each line as typed after `haicc`, what it answers under it; run with `howto/run`, shown here at info extraction.
 
 ## Notes
 

@@ -9,6 +9,8 @@ itself.
 
 ## Steps
 
+**At the machine**: the boot puts the install itself in place, below any mrepo: an `sh` procedure, no `steps.haicc`; run end to end by `base-linux-haicc`'s `test/run.sh`.
+
 ```sh
 # the sources linked, Bare put in place from them
 haicc sources link <folder>

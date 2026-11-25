@@ -1,0 +1,8 @@
+# step: the host: an mrepo of its own, built from the haicc component and linked here at host; its commission makes it ready and opens its door before the deploy answers
+. boot/deploy host haiccing/base-component-haicc
+# expect: "deployed":"host","mrepo":"local/host","package":"haiccing/base-component-haicc"
+# step: the check: the host answers with its root, in service
+host crud/read .
+# expect: "uri":["main","."],"value":{},"children":[]
+host service/start
+# expect: "state":"started","again":true

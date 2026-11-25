@@ -1,0 +1,16 @@
+# scene: the docs mrepo deployed, beside what is there
+. boot/deploy docs haiccing/base-component-docs
+# step: every mrepo of the install, from the registry: its unique URI, where it is from here, its package, running or not
+. haicc/mrepos
+# expect: "uri":"local/docs","position":"docs","package":"haiccing/base-component-docs","running":true
+# step: one by its unique URI; a namespace's; by what its record says
+. haicc/mrepos local/docs
+# expect: [{"uri":"local/docs"
+. haicc/mrepos "local/*"
+# expect: "uri":"local/boot"
+. haicc/mrepos "*/*[package='haiccing/base-component-docs']"
+# expect: [{"uri":"local/docs","position":"docs"
+# step: what this mrepo deployed itself: its links, at main
+. crud/read "*"
+# expect: "uri":["main","docs"]
+# expect: "shortcuts":[{"mrepo":"local/docs"
