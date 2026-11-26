@@ -1,9 +1,9 @@
-# boot: run by the runtime as it starts, a line a command
+# boot: run by the runtime as it starts, a line a command, before anything is taken in
+# the warm boot first: the schema registry's skeleton mounted where the registry is
+warm-boot/prepare
 protocol/activate . boot
-protocol/activate . crud
 protocol/activate . haicc
-protocol/activate . haici
-protocol/activate . help
 protocol/activate . info
 protocol/activate . runtime
+protocol/activate . warm-boot
 info/extract
