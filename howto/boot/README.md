@@ -4,8 +4,9 @@ The boot: the boot mrepo put in place on a machine, its runtime started, and run
 
 The `haicc` command runs this component's program from the sources once
 they are linked and Bare is in place (`haicc prereq`). The boot mrepo is
-the root: every command is addressed to it. It deploys nothing by
-itself.
+the root: every command is addressed to it. Its boot hook deploys the
+schema registry, `avro-registry`, a fixture of the install; nothing
+else by itself.
 
 ## Steps
 

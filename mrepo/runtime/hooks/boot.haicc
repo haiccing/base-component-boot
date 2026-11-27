@@ -1,6 +1,6 @@
 # boot: run by the runtime as it starts, a line a command, before anything is taken in
-# the warm boot first: the schema registry's skeleton mounted where the registry is
-warm-boot/prepare
+# the schema registry, a fixture: deployed at its fixed position, its commission loading its type data, strictly
+boot/deploy avro-registry haiccing/base-component-avro-registry
 protocol/activate . boot
 protocol/activate . haicc
 protocol/activate . info

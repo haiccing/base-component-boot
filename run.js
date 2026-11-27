@@ -20,9 +20,9 @@
 //      Bare running this (<bare> <work>/mrepos/boot/packages/haiccing/
 //      base-package-runtime.bundle <work>/mrepos/boot), as its own process
 //      (it outlives the boot); already running: kept.
-// What follows is the boot mrepo's own, its boot hook: the warm boot (the
-// schema registry's skeleton mounted: warm-boot/prepare), its protocols
-// activated, before it takes anything in.
+//   4. its boot hook waited for (the boot mrepo's own: the schema registry
+//      deployed, its protocols activated, before it takes anything in); a
+//      line of it that fails: its runtime bails out, the boot fails.
 // The outcome: `Booted: local/boot is running, pid <pid>, at <work>.`, exit
 // 0; or `Failed at <step>: <why>`, on stderr, exit 1.
 // Nothing is deployed by it: the boot mrepo then takes commands (haicc .
@@ -36,7 +36,7 @@ import process from './modules/node_modules/bare-process/index.js'
 import { existsSync, mkdirSync, mkdtempSync, writeFileSync, rmSync } from './modules/node_modules/bare-fs/index.js'
 import { tmpdir } from './modules/node_modules/bare-os/index.js'
 import { join, resolve } from './modules/node_modules/bare-path/index.js'
-import { gitdirOf, open, viewOf, start } from './modules/pear-full-square/mrepo-base-runtime/index.js'
+import { gitdirOf, open, viewOf, start, booted } from './modules/pear-full-square/mrepo-base-runtime/index.js'
 import { build, lay, parseSource, place, storeOf, placeScripts } from './modules/pear-full-square/mrepo-base-boot/index.js'
 import { MREPOS, SCRIPTS } from './modules/pear-full-square/mrepo-base-request/index.js'
 import { openRepo } from './modules/pear-full-square/mycelium-git/index.js'
@@ -111,6 +111,14 @@ await step('its runtime', async () => {
   status = await start({ repo: dir, bundle: runtime, bare: BARE })
   if (!status) throw new Error(`it did not start: ${BARE} ${runtime} ${dir}`)
   return `Its runtime is running, pid ${status.pid}, started ${status.started}: ${BARE} ${runtime} ${dir}`
+})
+
+// 4. Its boot hook waited for: its fixtures deployed, its protocols
+// activated. A line of it that fails: its runtime has bailed out, stopped.
+await step('its boot hook', async () => {
+  const b = await booted({ repo: dir })
+  if (b.state === 'failed') throw new Error(`${b.error} (its runtime stopped; nothing taken in)`)
+  return b.state === 'none' ? 'It has no boot hook.' : 'Its boot hook is done: its fixtures deployed, its protocols active.'
 })
 
 console.log(`Booted: ${URI} is running, pid ${status.pid}, at ${work}.`)

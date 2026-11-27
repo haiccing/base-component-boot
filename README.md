@@ -3,8 +3,9 @@
 The boot component: the initial boot mrepo, the root of a host, and the program that puts it in place.
 
 Run with Bare from its bundle, it builds the boot mrepo, places its
-packages and starts its runtime. It deploys nothing by itself: the boot
-mrepo then takes commands, and deploys the mrepos linked in it. Bare and
+packages and starts its runtime. The boot mrepo's hook deploys the
+schema registry, a fixture; then it takes commands, and deploys the
+mrepos linked in it. Bare and
 the sources are there before it runs: `haicc boot/deploy`, of
 `haiccing/base-app-haicc`, runs it from the sources.
 
@@ -48,14 +49,16 @@ then its outcome, the last line.
 4. **Its runtime started**, from its own `packages/`, by its directory, on
    the Bare that ran the boot, as its own process. It runs until
    stopped; running already: kept.
+5. **Its boot hook waited for**: the boot mrepo's own, before it takes
+   anything in: the schema registry deployed first, a fixture at its
+   fixed position, its commission loading its type data from the store;
+   then its protocols activated, its info extracted. A line of it that
+   fails: its runtime has bailed out, stopped, and the boot fails here,
+   with the line and why (a type file in the store that is no contract
+   fails the registry's load, so the boot).
 
 The outcome: `Booted: local/boot is running, pid <pid>, at <work>.`, exit
 0; or `Failed at <step>: <why>`, on stderr, exit 1.
-
-What follows is the boot mrepo's own, its `boot` hook, before it takes
-anything in: the warm boot first (`warm-boot/prepare`: the schema
-registry's skeleton mounted where the registry is, the types of every
-package in the store), then its protocols activated, its info extracted.
 
 ## Options
 
