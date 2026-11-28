@@ -47,6 +47,18 @@ test('the sources missing: the boot says the step it failed at and why, exit 1',
   } finally { rmSync(work, { recursive: true, force: true }) }
 })
 
+test('a source that is no local folder: the boot fails at the step that reads it, saying the source, exit 1; nothing started', async (t) => {
+  const work = mkdtempSync(join(tmpdir(), 'boot-github-'))
+  try {
+    const r = boot(work, ['--sources=github:haiccing'])
+    t.is(r.code, 1, 'exit 1')
+    t.alike(r.lines, [`The work folder: ${work}, its mrepos/ and scripts/ there.`], 'the step before it done, said')
+    t.is(r.err.trim(), 'Failed at built: not a source: github:haiccing (folder:<path> only)', 'the step, the source, on stderr')
+    t.absent(existsSync(join(work, 'packages')) || existsSync(join(work, 'mrepos', 'boot')), 'nothing placed: no store, no boot mrepo')
+    t.is(await ask({ repo: viewOf(work, 'boot'), op: 'status' }), null, 'no runtime started')
+  } finally { rmSync(work, { recursive: true, force: true }) }
+})
+
 test('a type file in the store that is no contract: the registry\'s load fails, the boot mrepo\'s hook with it; its runtime bails out, the boot fails, said', { timeout: 240000, skip: !have }, async (t) => {
   const work = mkdtempSync(join(tmpdir(), 'boot-strict-'))
   const dir = viewOf(work, 'boot')

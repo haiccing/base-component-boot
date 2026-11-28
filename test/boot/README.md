@@ -11,13 +11,16 @@ the tests: `boot.test.js`. It leaves nothing running.
 1. **The sources missing**: a source folder that is not there; the boot
    says the step it failed at and why, on stderr, exit 1; no runtime
    started.
-2. **A type file in the store that is no contract** (needs `SOURCES`):
+2. **A source that is no local folder**: `--sources=github:haiccing`;
+   the boot fails at the step that reads it, saying the source, exit 1;
+   nothing placed, no runtime started.
+3. **A type file in the store that is no contract** (needs `SOURCES`):
    a package placed in the store before the boot, its type not
    documented; the registry's load fails, the boot mrepo's hook with
    it; the boot exits 1, saying the step, the hook's line and why, to
    the type file; not booted, no runtime left, the registry's folder
    gone.
-3. **The whole lifecycle** (needs `SOURCES`):
+4. **The whole lifecycle** (needs `SOURCES`):
    - the boot: a line a step, the outcome last; the boot mrepo built,
      its packages placed and linked, its runtime started on the Bare
      that ran it (none put in place), its boot hook waited for;

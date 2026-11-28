@@ -4,7 +4,7 @@ The install's mrepos listed: from the registry, the work folder's `mrepos/`, and
 
 The registry is the install's, for its system administration: every
 mrepo is placed in the work folder's `mrepos/`, by its unique URI
-(`<work>/mrepos/local/host`, `<work>/mrepos/swarm-1/node-1`), made by the
+(`<work>/mrepos/local/host`, `<work>/mrepos/swarm-1/peer-1`), made by the
 boot program, kept by `boot/deploy` and `boot/teardown`. Nothing in an
 mrepo copies it. What an mrepo manages, it sees through its links, in
 forward visibility only: its shortcuts and its links layer.

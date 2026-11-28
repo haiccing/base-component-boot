@@ -36,20 +36,19 @@ A program: it makes no request and follows none. It prints a line a step
 as it completes, with what would be acted on (where, what, how long),
 then its outcome, the last line.
 
-1. **The work folder sorted**: its `mrepos/` and its `scripts/`, made
+0. **The work folder sorted**: its `mrepos/` and its `scripts/`, made
    when they are not there.
-2. **The boot mrepo built** the first time into `<work>/mrepos/boot/`, as
+1. **The boot mrepo built** the first time into `<work>/mrepos/boot/`, as
    any mrepo is: this component's list fetched into the work folder's
    store, `<work>/packages/`, and laid in, each package's part of the
    structure in order; its identity written, `local/boot`. There
    already: left as it is.
-3. **Its packages put in place**: checked against their manifest, each
-   hard linked individually into `<work>/mrepos/boot/packages/`; the list,
+2. **Its packages put in place**: each hard linked individually into `<work>/mrepos/boot/packages/`; the list,
    hashes, sources and store committed; their scripts placed.
-4. **Its runtime started**, from its own `packages/`, by its directory, on
+3. **Its runtime started**, from its own `packages/`, by its directory, on
    the Bare that ran the boot, as its own process. It runs until
    stopped; running already: kept.
-5. **Its boot hook waited for**: the boot mrepo's own, before it takes
+4. **Its boot hook waited for**: the boot mrepo's own, before it takes
    anything in: the schema registry deployed first, a fixture at its
    fixed position, its commission loading its type data from the store;
    then its protocols activated, its info extracted. A line of it that
@@ -63,8 +62,11 @@ The outcome: `Booted: local/boot is running, pid <pid>, at <work>.`, exit
 ## Options
 
 - `--work=<folder>`: the work folder; the current one by default.
-- `--sources=folder:<path>` or `--sources=github:<org>`, repeated: where
-  packages come from, in order; `github:haiccing` when none is given.
+- `--sources=folder:<path>`, repeated: where packages come from, in
+  order; local folders only, trusted as given, nothing checked (a check
+  of them belongs before the boot); none given, none. A source that is
+  no folder fails the step that first reads it, said: `Failed at built:
+  not a source: github:haiccing (folder:<path> only)`.
 
 ## The boot mrepo
 
@@ -73,8 +75,9 @@ The outcome: `Booted: local/boot is running, pid <pid>, at <work>.`, exit
 - No `service`: the one mrepo that is not service managed, every other
   is. It is the root: nothing upstream manages it, it is put in place by
   the boot program, not deployed, and takes commands from the start. Its
-  `boot` hook, run by its runtime each time it starts, runs the warm
-  boot, activates its protocols and extracts its info.
+  `boot` hook, run by its runtime each time it starts, deploys the
+  schema registry, activates its protocols (the warm boot's among
+  them) and extracts its info.
 - **Only what is brought to the request** is in its list for now: the
   help, haici and crud protocols come back as their packages are.
 - **The work folder sorted first**: the boot program makes `mrepos/`,

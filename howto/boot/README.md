@@ -29,5 +29,4 @@ haicc boot/deploy
 ## Notes
 
 - **Run as a program**, the same: `bare base-component-boot.bundle
-  --work=<folder> --sources=folder:<sources>`, with `--until-done` or
-  `--follow` to watch its requests (the README, "Options").
+  --work=<folder> --sources=folder:<sources>` (the README, "Options").

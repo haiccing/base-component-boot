@@ -27,10 +27,12 @@
 // 0; or `Failed at <step>: <why>`, on stderr, exit 1.
 // Nothing is deployed by it: the boot mrepo then takes commands (haicc .
 // boot/deploy host <package>).
-//   run.js [--work=<folder>] [--sources=folder:<path>|github:<org>]...
+//   run.js [--work=<folder>] [--sources=folder:<path>]...
 //     --work      the work folder: the current one by default
-//     --sources   where packages come from, in order (github:haiccing when
-//                 none is given)
+//     --sources   where packages come from, in order: local folders only,
+//                 trusted as given (none given: none); read by the step
+//                 that first needs them, so one that is no folder fails
+//                 it, said
 // Our modules from the package's own modules/ (no node_modules above them here).
 import process from './modules/node_modules/bare-process/index.js'
 import { existsSync, mkdirSync, mkdtempSync, writeFileSync, rmSync } from './modules/node_modules/bare-fs/index.js'
@@ -57,17 +59,20 @@ const args = process.argv.slice(script ? 2 : 1).filter(a => a !== '/run')
 const BARE = process.execPath
 const value = flag => args.filter(a => a.startsWith(`--${flag}=`)).map(a => a.slice(flag.length + 3))
 const work = resolve(value('work')[0] ?? '.')
-const sources = (value('sources').length ? value('sources') : ['github:haiccing']).map(parseSource)
+// (read in a step: a source that is none fails that step, said)
+const sources = () => value('sources').map(parseSource)
 const dir = viewOf(work, NAME)
 
 // console: the program's own output: a line a step as it completes, what
 // it took behind it; the step it failed at, on stderr
 // A step: done, said; what it throws: the step it is, why, exit 1.
+// Its time a duration, by the monotonic clock (process.hrtime), never the
+// wall clock: a clock corrected in steps made one negative.
 async function step (name, fn) {
-  const began = Date.now()
+  const began = process.hrtime.bigint()
   try {
     const said = await fn()
-    console.log(`${said} (${Date.now() - began} ms)`)
+    console.log(`${said} (${(process.hrtime.bigint() - began) / 1000000n} ms)`)
   } catch (err) {
     console.error(`Failed at ${name}: ${err.message}`)
     process.exit(1)
@@ -85,7 +90,7 @@ await step('built', async () => {
   if (existsSync(gitdirOf(work, NAME))) return `${URI} is built already, at ${dir}: left as it is.`
   const tmp = mkdtempSync(join(tmpdir(), 'boot-mrepo-'))
   try {
-    lay({ store: storeOf(work), sources, target: TARGET, into: tmp })
+    lay({ store: storeOf(work), sources: sources(), target: TARGET, into: tmp })
     // its identity, in its runtime layer
     if (existsSync(join(tmp, 'runtime', '.layer.json'))) writeFileSync(join(tmp, 'runtime', 'mrepo.json'), JSON.stringify({ uri: URI }, null, 2) + '\n')
     const { layers } = await build({ from: tmp, work, name: NAME, time: BUILT })
@@ -99,7 +104,7 @@ await step('packages', async () => {
   const repo = await open(work)
   let list
   try { list = JSON.parse((await openRepo(repo.backend).read('/packages/.layer.json')).toString()).packages } finally { await repo.close() }
-  const placed = await place({ dir, store: storeOf(work), sources, list })
+  const placed = await place({ dir, store: storeOf(work), sources: sources(), list })
   const scripts = list.flatMap(pkg => placeScripts({ store: storeOf(work), pkg, into: join(work, SCRIPTS) }))
   return [`Placed its ${list.length} packages, linked from the store at ${storeOf(work)}${placed.committed ? '' : ', as they were'}; ${scripts.length} ${scripts.length === 1 ? 'script' : 'scripts'} of theirs in ${SCRIPTS}/:`, ...list.map(p => `  ${p}`)].join('\n')
 })
